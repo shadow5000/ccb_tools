@@ -1,0 +1,46 @@
+import os 
+import time
+#main_path配置为run.bat所在文件夹路径
+main_path=r'H:\ECPClient_V1.3_0906'
+prop_path=main_path+r'\resources\network.properties'
+run_bat_path=main_path+r'\run.bat'
+env=''
+a= input('欢迎使用自动切换环境工具！\n\n\
+请输入序号选择环境:\n\n\
+	2:pl2测试环境---128.192.152.79:80\n\n\
+	3:pl3测试环境---128.192.135.245:80\n\n\
+	4:pl4测试环境---128.192.156.244:80\n\n\
+	5:vt环境---128.192.165.109:80\n\n\
+	6:pl2开发环境---128.192.154.32:8105\n\n\
+	7:pl3开发环境---128.192.154.34:8101\n\n\
+	8:pl4开发环境---128.192.154.34:8103\n\n\
+')
+
+if a == '2':
+	env= '128.192.152.79:80'
+elif a== '3':
+	env='128.192.135.245:80'
+elif a== '4':
+	env='128.192.156.244:80'
+elif a== '5':
+	env='128.192.165.109:80'
+elif a== '6':
+	env='128.192.154.32:8105'
+elif a== '7':
+	env='128.192.154.34:8101'
+elif a== '8':
+	env='128.192.154.34:8103'
+else:
+	print('请重新选择:')
+
+data=''
+with open(prop_path,'r+')as f:
+	for line in f.readlines():
+		if (line.find('F5')==0):
+			line='F5=%s' %(env+'\n')
+		data+=line
+with open(prop_path,'r+')as f:
+	f.writelines(data)
+time.sleep(1)
+os.chdir(main_path)
+os.system(run_bat_path)
