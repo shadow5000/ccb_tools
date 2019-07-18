@@ -1,0 +1,47 @@
+import os 
+import time
+import sys
+
+def select_env():
+	a= input('请输入序号选择环境:\n\n\
+		2:pl2测试环境---128.192.152.79:80\n\n\
+		3:pl3测试环境---128.192.135.245:80\n\n\
+		4:pl4测试环境---128.192.156.244:80\n\n\
+		5:vt环境---128.192.165.109:80\n\n\
+		6:pl2开发环境---128.192.154.32:8105\n\n\
+		7:pl3开发环境---128.192.154.34:8101\n\n\
+		8:pl4开发环境---128.192.154.34:8103\n\n\
+	')
+	global env
+	if a in dic.keys():
+		env=dic[a]
+	else:
+		print('输入错误，请重新选择:')
+		select_env()	
+	return env
+	
+#main_path配置为run.bat所在文件夹路径，本文件应放置在该路径下
+main_path=sys.path[0]
+prop_path=main_path+r'\resources\network.properties'
+run_bat_path=main_path+r'\run.bat'
+env=''
+dic={'2':'128.192.152.79:80',
+	'3':'128.192.135.245:80',
+	'4':'128.192.156.244:80',
+	'5':'128.192.165.109:80',
+	'6':'128.192.154.32:8105',
+	'7':'128.192.154.34:8101',
+	'8':'128.192.154.34:8103'}
+	
+select_env()	
+data=''
+with open(prop_path,'r+')as f:
+	for line in f.readlines():
+		if (line.find('F5')==0):
+			line='F5=%s' %(env+'\n')
+		data+=line
+with open(prop_path,'r+')as f:
+	f.writelines(data)
+time.sleep(1)
+os.chdir(main_path)
+os.system(run_bat_path)
