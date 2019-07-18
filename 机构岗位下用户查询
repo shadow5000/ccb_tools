@@ -1,0 +1,82 @@
+import sys
+import time
+import os
+import setting
+
+def select_env():
+	a=input('请输入序号选择环境:\n\n'+setting.select_env_input)
+	global env
+	if a in setting.dic_maishu.keys():
+		env=setting.dic_maishu[a]
+	else:
+		print('输入错误，请重新选择:')
+		select_env()	
+	return env
+	
+def get_pstInstId():
+	a=input('请输入机构号:\n')
+	global pstInstId
+	if a.isdigit() == True:
+		pass
+	else:
+		print('机构号应为数字!')
+		get_pstInstId()
+	if len(a) == 9 :
+		pass
+	else:
+		print('请检查输入是否正确，机构号应为9位数字')
+		get_pstInstId()
+	pstInstId = a
+	return pstInstId
+	
+def get_pstId():
+	global pstId
+	a=input('请选择岗位:\n\n'+setting.select_pstId_input)
+	if a == '0':
+		b=input('请输入岗位:\n')
+		pstId = b
+	elif a in setting.dic_pstId.keys():
+		pstId = setting.dic_pstId[a]
+	else:
+		print('输入错误，请重新选择岗位:\n')
+		get_pstId()
+	return pstId
+	
+#因为系统变量编辑被锁定，需判断是否需要添加selenium库的path
+path_now=sys.path
+lib_path='I:\pythonlibs'
+if lib_path not in sys.path:  #'I:\pythonlibs'为自定义库所在路径，selenium库在此路径下
+	sys.path.append(lib_path)
+else:
+	print('selenium_path已存在')
+time.sleep(1)
+
+from  selenium import webdriver	
+env=''
+pstInstId=''
+pstId=''
+select_env()	
+get_pstInstId()
+get_pstId()
+
+
+chrome_path=r'I:\chromedriver\chromedriver'#chromedriver.exe程序路径
+driver=webdriver.Chrome(chrome_path)
+driver.implicitly_wait(8)
+driver.get(env)
+
+
+element=driver.find_element_by_link_text('机构岗位下用户查询')
+element.click()
+
+element=driver.find_element_by_id('pstId')
+element.send_keys(pstId)
+time.sleep(1)
+element=driver.find_element_by_id('pstInstId')
+element.send_keys(pstInstId)
+time.sleep(1)
+element=driver.find_element_by_id('BtnSubmit')
+element.click()
+print('5分钟后自动退出')
+time.sleep(300)
+driver.quit()
